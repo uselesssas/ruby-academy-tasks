@@ -14,21 +14,20 @@ class SearchAgesStudents
     students.find_all do |s|
       # s.include?(student_age)
       # или
-      # s.rindex(student_age) - должна работать эффективнее в данном случае???
+      # s.rindex(student_age) - должна работать эффективнее в данном случае ???
       # Минус способов в том, что при вводе, например, 1 найдет все возроста которые содержут цифру 1 (18, 19, 21...)
       # Можно ограничить диапазон ввода возрастов AGES = (17..99).freeze
-      # Если, например, в текстовом документе будет использоваться любой возможный возраст, то можно сделать так:
+      # Если, например, в файле будет использоваться любой возможный возраст, то можно сделать так:
       # Просматривает переданную строку в поисках цифры, делает из цифры arr и смотрит на сответствие с искомым student_age
       s.scan(/\d+/).include?(student_age)
     end
   end
 
   # Записывает найденых методом search_age студентов в файл results.txt
-  def writing_student(student_age)
+  def writing_students(found_ages)
     File.open('results.txt', 'a') do |f|
-      f.puts(search_age(student_age))
+      f.puts(found_ages)
     end
-    puts "Студенты с возрастом #{student_age} записаны."
   end
 
   # Возвращает true если все студенты из students.txt будут записаны в results.txt
@@ -40,14 +39,16 @@ class SearchAgesStudents
     # Если порядок написания имён будет разный в файлах, вернёт false
     #
     # Важно чтобы в students.txt была пустая строка в конце
+    # Файлы сравниваются по размеру
     File.size('students.txt') == File.size('results.txt')
+    # написать новый сопоставитель
   end
 
-  # Выводит записанные в файл results.txt возраста в консоль
+  # Выводит записанные в файл results.txt возраста
   def output_students(used_ages)
     # Если не записало студентов в файл results.txt
     if used_ages.empty?
-      puts 'Студенты не записаны!'
+      puts 'Студенты не записаны.'
     else
       # used_ages * ', ' сработает как метод Array#join
       puts "Записанны студенты с возрастами - #{used_ages * ', '}."
@@ -64,20 +65,29 @@ class SearchAgesStudents
       student_age = gets.chomp
       break if student_age == '-1'
 
-      if used_ages.include?(student_age) # Если мы пытаемся записать один и тот же возраст 2 раза
+      # Если мы пытаемся записать один и тот же возраст 2 раза
+      if used_ages.include?(student_age)
         puts "Возраст #{student_age} уже записан в файл!"
         next # Используется для пропуска текущей итерации чтобы метод compare_files? не отрабатывался лишний раз
-      elsif search_age(student_age).empty?
-        puts "Студентов с возрастом #{student_age} не существует!"
-        next # Используется для пропуска текущей итерации чтобы метод compare_files? не отрабатывался лишний раз
       else
-        writing_student(student_age)
-        # Записываем в arr уже использованный возраст для дальнейшей проверки
-        used_ages << student_age
+        found_ages = search_age(student_age)
+        if found_ages.empty?
+          puts "Студентов с возрастом #{student_age} не существует!"
+          next # Используется для пропуска текущей итерации чтобы метод compare_files? не отрабатывался лишний раз
+        else
+          writing_students(found_ages)
+          puts "Студенты с возрастом #{student_age} записаны."
+          # Записываем в arr уже использованный возраст для дальнейшей проверки
+          used_ages << student_age
+        end
+        # Если все студенты из students.txt будут записаны в results.txt
+        if compare_files? == true
+          puts 'Все студенты записаны.'
+          break
+        end
       end
-      break if compare_files? == true
     end
-    output_students(used_ages)
+    output_students(used_ages) # Выводим записанных студентов
   end
 end
 
