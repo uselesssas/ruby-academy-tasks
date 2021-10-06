@@ -7,13 +7,14 @@ class Greeting
   attr_reader :name, :surname, :age
 
   def name=(name)
-    raise EmptyNameError, 'Ошибка: Имя не может быть пустым!' if name == ''
+    # strip.empty? аналог #blank? из Rails
+    raise EmptyNameError, 'Ошибка: Имя не может быть пустым!' if name.strip.empty?
 
     @name = name
   end
 
   def surname=(surname)
-    raise EmptyNameError, 'Ошибка: Фамилия не может быть пустой!' if surname == ''
+    raise EmptyNameError, 'Ошибка: Фамилия не может быть пустой!' if surname.strip.empty?
 
     @surname = surname
   end
@@ -25,23 +26,23 @@ class Greeting
   end
 
   # Просит пользователя ввести его name, surname, age
-  def user_data_entry
+  def user_data_query
     print 'Введите Ваше имя: '
-    self.name = gets.chomp
+    self.name = gets.chomp.capitalize
     print 'Введите Вашу фамилию: '
-    self.surname = gets.chomp
+    self.surname = gets.chomp.capitalize
     print 'Введите Ваш возраст: '
     self.age = gets.to_i
   rescue EmptyNameError, InvalidAgeError => e # Если возникло исключение
-    puts e.message # Выводим сообщение, содержащееся в исключении
+    puts e # Выводим сообщение, содержащееся в исключении
     retry # Перезапуск метода
   end
 
   # Вывод приветствия в зависимости от age
   def greeting
-    user_data_entry
+    user_data_query
     if age < 18
-      puts "Привет, #{name} #{surname}. Тебе меньше 18 лет, но начать учится программировать никогда не рано!"
+      puts "Привет, #{name} #{surname}. Тебе меньше 18 лет, но начать учится программировать никогда не рано"
     else
       puts "Привет, #{name} #{surname}. Самое время заняться делом!"
     end
