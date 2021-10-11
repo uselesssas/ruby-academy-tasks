@@ -1,4 +1,4 @@
-def add_pokemon(pokemons)
+def add_pokemon(pokemons = [])
   puts 'Сколько добавить покемонов?'
   count = gets.to_i
   count.times do
@@ -9,8 +9,7 @@ def add_pokemon(pokemons)
     pokemon[:color] = gets.chomp
     pokemons << pokemon
   end
+  pokemons
 end
 
-pokemons = []
-add_pokemon(pokemons)
-p pokemons
+p add_pokemon
