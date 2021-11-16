@@ -3,13 +3,14 @@ class SearchAgesStudents
   def search_age(student_age)
     raise 'File \'students.txt\' does not exist' unless File.exist?('students.txt')
 
-    # Можно сразу записывать найденные возраста по одному либо сохранить в arr
+    # Можно сразу записывать найденный возраста в файл по одному либо сохранить в массив
+    # т.к. один найденный возраст не должен занимать много памяти сохраняем его в массив
     found_students = []
     File.foreach('students.txt') do |student|
       # student.include?(student_age)
       # Минус способа в том, что при вводе, например, 1 найдет все возроста которые содержут цифру 1 (18, 19, 21...)
       # Можно ограничить диапазон ввода возрастов AGES = (17..99).freeze
-      # Если в файле будет использоваться любой возможный возраст:
+      # Если, например, в файле будет использоваться любой возможный возраст:
       # Просматривает переданную строку в поисках цифры, делает из цифры arr и смотрит на сответствие с искомым возрастом
       found_students << student if student.scan(/\d+/).include?(student_age)
     end
@@ -46,8 +47,9 @@ class SearchAgesStudents
       # found_ages * ', ' сработает как метод Array#join
       puts "Записанны студенты с возрастами - #{found_ages * ', '}."
       # Выводим записанные возраста
-      # Метод read обрабатывает открытие и закрытие файла
-      puts File.read('results.txt')
+      File.foreach('results.txt') do |line|
+        puts line
+      end
     end
   end
 
