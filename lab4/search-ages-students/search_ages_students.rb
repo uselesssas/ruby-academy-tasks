@@ -1,12 +1,13 @@
 class SearchAgesStudents
-  # Возвращает arr студентов с искомым возрастом из файла students.txt
+  STUDENTS_FILE_PATH = 'students.txt'.freeze
+  RESULTS_FILE_PATH = 'results.txt'.freeze
+  # Возвращает arr студентов с искомым возрастом из файла STUDENTS_FILE_PATH
   def search_age(student_age)
-    raise 'File \'students.txt\' does not exist' unless File.exist?('students.txt')
+    raise "File '#{STUDENTS_FILE_PATH}' does not exist" unless File.exist?(STUDENTS_FILE_PATH)
 
     # Можно сразу записывать найденный возраста в файл по одному либо сохранить в массив
-    # т.к. один найденный возраст не должен занимать много памяти сохраняем его в массив
     found_students = []
-    File.foreach('students.txt') do |student|
+    File.foreach(STUDENTS_FILE_PATH) do |student|
       # student.include?(student_age)
       # Минус способа в том, что при вводе, например, 1 найдет все возроста которые содержут цифру 1 (18, 19, 21...)
       # Можно ограничить диапазон ввода возрастов AGES = (17..99).freeze
@@ -17,37 +18,37 @@ class SearchAgesStudents
     found_students
   end
 
-  # Записывает найденых методом #search_age студентов в файл results.txt
+  # Записывает найденых методом #search_age студентов в файл RESULTS_FILE_PATH
   def writing_students(required_age)
-    File.open('results.txt', 'a') do |f|
+    File.open(RESULTS_FILE_PATH, 'a') do |f|
       f.puts(required_age)
     end
   end
 
-  # Возвращает true если все студенты из students.txt будут записаны в results.txt
+  # Возвращает true если все студенты из STUDENTS_FILE_PATH будут записаны в RESULTS_FILE_PATH
   def compare_files?
     # require 'fileutils'
-    # FileUtils.compare_file('students.txt', 'results.txt')
+    # FileUtils.compare_file(STUDENTS_FILE_PATH, RESULTS_FILE_PATH)
     # Минус способа:
-    # Возвращает true, если содержимое файла students.txt и файла results.txt идентично
+    # Возвращает true, если содержимое файла STUDENTS_FILE_PATH и файла RESULTS_FILE_PATH идентично
     # Если порядок написания имён будет разный вернёт false
 
-    # Важно чтобы в students.txt была пустая строка в конце
+    # Важно чтобы в STUDENTS_FILE_PATH была пустая строка в конце
     # Файлы сравниваются по размеру
-    File.size('students.txt') == File.size('results.txt')
+    File.size(STUDENTS_FILE_PATH) == File.size(RESULTS_FILE_PATH)
     # написать новый сопоставитель
   end
 
-  # Выводит записанные в файл results.txt возраста
+  # Выводит записанные в файл RESULTS_FILE_PATH возраста
   def output_students(found_ages)
-    # Если не записало студентов в файл results.txt
+    # Если не записало студентов в файл RESULTS_FILE_PATH
     if found_ages.empty?
       puts 'Студенты не записаны.'
     else
-      # found_ages * ', ' сработает как метод Array#join
+      # {found_ages * ', '} сработает как метод Array#join
       puts "Записанны студенты с возрастами - #{found_ages * ', '}."
       # Выводим записанные возраста
-      File.foreach('results.txt') do |line|
+      File.foreach(RESULTS_FILE_PATH) do |line|
         puts line
       end
     end
@@ -77,7 +78,7 @@ class SearchAgesStudents
           found_ages << student_age
         end
       end
-      # Если все студенты из students.txt будут записаны в results.txt
+      # Если все студенты из STUDENTS_FILE_PATH будут записаны в RESULTS_FILE_PATH
       if compare_files? == true
         puts 'Все студенты записаны.'
         break

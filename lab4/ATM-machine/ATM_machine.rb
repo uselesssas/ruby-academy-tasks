@@ -1,99 +1,70 @@
-balance = nil
-if File.exist?('balance.txt') # Если файл существует
-  File.open('balance.txt') do |f|
-    balance = f.read.to_f # Берём баланс из файла
-  end
-else
-  BALANCE = 100.0 # Сами задаём начальный баланс константой
+BALANCE_FILE_PATH = 'balance.txt'.freeze
+DEFAULT_BALANCE = 100.0
+
+def balance
+  puts "Ваш баланс: #{@balance}"
 end
 
-# Вывод меню
-def main_menu
-  puts
-  puts 'Показать баланс нажмите «B»'
-  puts 'Внести наличные нажмите «D»'
-  puts 'Снять наличные нажмите «W»'
-  puts 'Выйти нажмите «Q»'
-  print '> '
-end
-
-# Чистка консоли
-def cls
-  system('cls') || system('clear')
-end
-
-loop do
-  main_menu
-  choice = gets.chomp.downcase
-  cls
-  break if choice == 'q'
-
-  if balance.nil? # Если баланс не считался с файла используем стартовый
-    case choice
-    when 'b' # Показать баланс
-      puts "Баланс: #{BALANCE}$"
-    when 'd' # Внести наличные
-      puts 'Сколько Вы хотите внести?'
-      print '> '
-      add_balance = gets.to_i
-      if add_balance.positive? # Если больше 0
-        BALANCE += add_balance
-        puts "Баланс: #{BALANCE}$"
-      else
-        puts "Ошибка: Вы не можете внести #{add_balance}$"
-      end
-    when 'w' # Снять наличные
-      puts 'Сколько Вы хотите снять?'
-      print '> '
-      withdraw_balance = gets.to_i
-      # Если больше 0 и <= текущего баланса
-      if withdraw_balance.positive? && withdraw_balance <= BALANCE
-        BALANCE -= withdraw_balance
-        puts "Баланс: #{BALANCE}$"
-      else
-        puts "Ошибка: Вы не можете снять #{withdraw_balance}$"
-        puts "Ваш баланс: #{BALANCE}$"
-      end
+def deposit
+  loop do
+    puts 'Введите сумму для внесения депозита'
+    puts 'Q (ВЫЙТИ)'
+    print 'Ввод: '
+    amount = gets.chomp
+    if amount == 'q'
+      break
+    elsif amount.to_f <= 0
+      puts 'Ошибка: сумма депозита должна быть больше нуля.'
     else
-      cls
-    end
-  else # Используем баланс с файла
-    case choice
-    when 'b' # Показать баланс
-      puts "Баланс: #{balance}$"
-    when 'd' # Внести наличные
-      puts 'Сколько Вы хотите внести?'
-      print '> '
-      add_balance = gets.to_i
-      if add_balance.positive? # Если больше 0
-        balance += add_balance
-        puts "Баланс: #{balance}$"
-      else
-        puts "Ошибка: Вы не можете внести #{add_balance}$"
-      end
-    when 'w' # Снять наличные
-      puts 'Сколько Вы хотите снять?'
-      print '> '
-      withdraw_balance = gets.to_i
-      # Если больше 0 и <= текущего баланса
-      if withdraw_balance.positive? && withdraw_balance <= balance
-        balance -= withdraw_balance
-        puts "Баланс: #{balance}$"
-      else
-        puts "Ошибка: Вы не можете снять #{withdraw_balance}$"
-        puts "Ваш баланс: #{balance}$"
-      end
-    else
-      cls
+      @balance += amount
+      break
     end
   end
 end
-# Перезапись получившегося баланса в файл
-File.open('balance.txt', 'w') do |f|
-  if balance.nil? # Если баланс не считался с файла
-    f.puts(BALANCE)
-  else
-    f.puts(balance)
+
+def withdraw
+  loop do
+    print 'Введите сумму для вывода средств: '
+    amount = gets.to_f
+    if amount > @balance
+      puts 'Ошибка: недостаточно средств.'
+    elsif amount <= 0
+      puts 'Ошибка: сумма для вывода должна быть больше нуля.'
+    else
+      @balance -= amount
+      break
+    end
   end
 end
 
+def init
+  @balance = if File.file?(BALANCE_FILE_PATH) && !File.zero?(BALANCE_FILE_PATH)
+               File.readlines(BALANCE_FILE_PATH).first.to_f
+             else
+               DEFAULT_BALANCE
+             end
+  loop do
+    print "---Меню---\n" \
+              "D (ДЕПОЗИТ)\n" \
+              "W (ВЫВЕСТИ)\n" \
+              "B (ПОКАЗАТЬ БАЛАНС)\n" \
+              "Q (ВЫЙТИ)\n" \
+              'Ввод: '
+    input = gets.chomp.downcase
+    case input
+    when 'd'
+      deposit
+    when 'w'
+      withdraw
+    when 'b'
+      balance
+    when 'q'
+      break
+    else
+      next
+    end
+  end
+  File.open(BALANCE_FILE_PATH, 'w') { |f| f.write(@balance) }
+end
+
+init
