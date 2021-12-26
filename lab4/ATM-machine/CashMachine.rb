@@ -8,7 +8,7 @@ class CashMachine
 
   def deposit
     loop do
-      puts 'Введите сумму для внесения депозита (0 - ВЫЙТИ)'
+      puts 'Введите сумму для внесения депозита (0 - ВЫЙТИ).'
       print 'Ввод: '
       amount = gets.to_f
       break if amount.zero?
@@ -24,7 +24,7 @@ class CashMachine
 
   def withdraw
     loop do
-      puts 'Введите сумму для вывода средств (0 - ВЫЙТИ)'
+      puts 'Введите сумму для вывода средств (0 - ВЫЙТИ).'
       print 'Ввод: '
       amount = gets.to_f
       break if amount.zero?
@@ -47,7 +47,7 @@ class CashMachine
                  DEFAULT_BALANCE
                end
     loop do
-      print "---Меню---\n" \
+      print "----Меню----\n" \
                 "D (ДЕПОЗИТ)\n" \
                 "W (ВЫВЕСТИ)\n" \
                 "B (ПОКАЗАТЬ БАЛАНС)\n" \
@@ -71,4 +71,4 @@ class CashMachine
   end
 end
 
-#CashMachine.new.init
+# CashMachine.new.init

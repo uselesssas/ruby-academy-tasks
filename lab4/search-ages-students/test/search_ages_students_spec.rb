@@ -7,8 +7,6 @@ describe SearchAgesStudents do
                "Белова Мия 17\nГолубева Анна 18\nАртамонов Никита 19\nАлексеева Эмилия 20\nИльина Василиса 20\n")
   end
 
-  subject { SearchAgesStudents.new }
-
   it 'recording of one ages' do
     allow_any_instance_of(Kernel).to receive(:gets).and_return('20', '-1')
     expect(subject.init)
@@ -44,25 +42,36 @@ describe SearchAgesStudents do
   end
 
   it 'trying to record the same age multiple times' do
-    allow_any_instance_of(Kernel).to receive(:gets).and_return('17', '17', '17', '-1')
+    allow_any_instance_of(Kernel).to receive(:gets).and_return('17', '17', '20', '20', '20', '-1')
     expect(subject.init)
     expect do
-      subject.output_students(%w[17])
-    end.to output("Записанны студенты с возрастами - 17.\n" \
-                          "Белова Мия 17\n").to_stdout
-  end
-
-  it 'attempt to record non-existent ages' do
-    allow_any_instance_of(Kernel).to receive(:gets).and_return('16', '20', '21', '-1')
-    expect(subject.init)
-    expect do
-      subject.output_students(%w[20])
-    end.to output("Записанны студенты с возрастами - 20.\n" \
+      subject.output_students(%w[17 20])
+    end.to output("Записанны студенты с возрастами - 17, 20.\n" \
+                          "Белова Мия 17\n" \
                           "Алексеева Эмилия 20\n" \
                           "Ильина Василиса 20\n").to_stdout
   end
 
+  it 'attempt to record non-existent ages' do
+    allow_any_instance_of(Kernel).to receive(:gets).and_return('16', '17', '16', '20', '1', '1', 'W', '100', '-2', '-1')
+    expect(subject.init)
+    expect do
+      subject.output_students(%w[17 20])
+    end.to output("Записанны студенты с возрастами - 17, 20.\n" \
+                          "Белова Мия 17\n" \
+                          "Алексеева Эмилия 20\n" \
+                          "Ильина Василиса 20\n").to_stdout
+  end
+
+  it 'we do not record the age' do
+    allow_any_instance_of(Kernel).to receive(:gets).and_return('-1')
+    expect(subject.init)
+    expect do
+      subject.output_students(%w[])
+    end.to output("Студенты не записаны.\n").to_stdout
+  end
+
   after do
-    File.delete('results.txt')
+    File.delete('results.txt') if File.exist?('results.txt')
   end
 end

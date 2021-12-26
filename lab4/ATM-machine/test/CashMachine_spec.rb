@@ -6,8 +6,6 @@ describe CashMachine do
     File.write('balance.txt', '500.0', mode: 'w')
   end
 
-  subject { CashMachine.new }
-
   it '#balance' do
     allow_any_instance_of(Kernel).to receive(:gets).and_return("b\n", "q\n")
     expect(subject.init)
