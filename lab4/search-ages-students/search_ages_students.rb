@@ -37,7 +37,14 @@ class SearchAgesStudents
     # Файлы сравниваются по размеру
     File.size(STUDENTS_FILE_PATH) == File.size(RESULTS_FILE_PATH)
     # написать новый сопоставитель
+    it '' do
+    allow_any_instance_of(Kernel).to receive(:gets).and_return('16', '-1')
+    expect(subject.init)
+    expect do
+      subject.output_students([])
+    end.to output(nil).to_stdout
   end
+end
 
   # Выводит записанные в файл RESULTS_FILE_PATH возраста
   def output_students(found_ages)
@@ -88,4 +95,4 @@ class SearchAgesStudents
   end
 end
 
-#SearchAgesStudents.new.init
+# SearchAgesStudents.new.init
