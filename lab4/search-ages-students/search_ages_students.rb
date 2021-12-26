@@ -88,4 +88,4 @@ class SearchAgesStudents
   end
 end
 
-SearchAgesStudents.new.init
+#SearchAgesStudents.new.init

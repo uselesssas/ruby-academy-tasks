@@ -2,24 +2,21 @@ require 'rspec'
 require_relative '../search_ages_students'
 
 describe SearchAgesStudents do
-  # before(:each) do
-  #   File.write('results.txt', '')
-  # end
-  #
-  # it '' do
-  #   allow_any_instance_of(Kernel).to receive(:gets).and_return('-1')
-  # end
-
-  it '' do
-    @buffer = StringIO.new
-    @filename = 'students.txt'
-    @content = "Белова Мия 20\nГолубева Анна 21\nАртамонов Никита 20\nАлексеева Эмилия 19\n"
-    allow(File).to receive(:open).with(@filename, 'w').and_yield(@buffer)
-
-    # call the function that writes to the file
-    File.open(@filename, 'w') { |f| f.write(@content) }
-
-    # reading the buffer and checking its content.
-    expect(@buffer.string).to eq(@content)
+  before do
+    File.write('results.txt', '', mode: 'w')
   end
+
+  before do
+    File.write('students.txt',
+               "Белова Мия 17\nГолубева Анна 18\nАртамонов Никита 19\nАлексеева Эмилия 20\nИльина Василиса 21\n")
+  end
+
+  it 'all ages' do
+    allow_any_instance_of(Kernel).to receive(:gets).and_return('17', '18', '19', '20', '21')
+    expect do
+      SearchAgesStudents.new.init
+    end.to output("Введите возраст студента для записи («-1» - для выхода): \nСтуденты с возрастом 17 записаны.\nВведите возраст студента для записи («-1» - для выхода): \nСтуденты с возрастом 18 записаны.\nВведите возраст студента для записи («-1» - для выхода): \nСтуденты с возрастом 19 записаны.\nВведите возраст студента для записи («-1» - для выхода): \nСтуденты с возрастом 20 записаны.\nВведите возраст студента для записи («-1» - для выхода): \nСтуденты с возрастом 21 записаны.\nВсе студенты записаны.\nЗаписанны студенты с возрастами - 17, 18, 19, 20, 21.\nБелова Мия 17\nГолубева Анна 18\nАртамонов Никита 19\nАлексеева Эмилия 20\nИльина Василиса 21\n").to_stdout
+  end
+
+
 end
