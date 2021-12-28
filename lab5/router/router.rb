@@ -7,14 +7,14 @@ module Resource
 
     loop do
       print 'Choose verb to interact with resources (GET/POST/PUT/DELETE) / q to exit: '
-      verb = gets.chomp
-      break if verb == 'q'
+      verb = gets.chomp.upcase
+      break if verb == 'Q'
 
       action = nil
 
       if verb == 'GET'
         print 'Choose action (index/show) / q to exit: '
-        action = gets.chomp
+        action = gets.chomp.downcase
         break if action == 'q'
       end
 
@@ -32,8 +32,12 @@ class PostsController
   end
 
   def index
-    @posts.each_with_index do |post, index|
-      puts "#{index}. #{post}"
+    if @posts.empty?
+      puts 'Posts not found'
+    else
+      @posts.each_with_index do |post, index|
+        puts "#{index}. #{post}"
+      end
     end
   end
 
@@ -86,8 +90,12 @@ class CommentsController
   end
 
   def index
-    @comments.each_with_index do |comment, index|
-      puts "#{index}. #{comment}"
+    if @comments.empty?
+      puts 'Posts not found'
+    else
+      @comments.each_with_index do |post, index|
+        puts "#{index}. #{post}"
+      end
     end
   end
 
@@ -140,6 +148,7 @@ class Router
   def init
     resources(PostsController, 'posts')
     resources(CommentsController, 'comments')
+
     loop do
       print 'Choose resource you want to interact (1 - Posts, 2 - Comments, q - Exit): '
       choise = gets.chomp
